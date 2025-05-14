@@ -1,0 +1,31 @@
+services:
+  med-unlp-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: med-unlp-api:latest
+    container_name: med-unlp-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://med-unlp-db:5432/med_unlp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: example
+    depends_on:
+      - med-unlp-db
+
+  med-unlp-db:
+    image: postgres:15-alpine
+    container_name: med-unlp-db
+    environment:
+      POSTGRES_DB: med_unlp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
