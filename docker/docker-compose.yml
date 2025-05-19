@@ -1,5 +1,6 @@
 services:
   med-unlp-api:
+    env_file: .env 
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -12,8 +13,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://med-unlp-db:5432/med_unlp
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: example
+ 
     depends_on:
-      - med-unlp-db
+      med-unlp-db:
+        condition: service_healthy
+    restart: unless-stopped
 
   med-unlp-db:
     image: postgres:15-alpine
@@ -22,10 +26,17 @@ services:
       POSTGRES_DB: med_unlp
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: example
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d med_unlp"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
 
 volumes:
   db_data:
