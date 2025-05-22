@@ -4,9 +4,9 @@ spring:
       on-profile: docker
 
   datasource:
-    url: jdbc:postgresql://med-unlp-db:5432/med_unlp
-    username: postgres
-    password: example
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: HikariCP
@@ -32,9 +32,9 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
-    validate-on-migrate: true
+    locations: classpath:/db/migration
+    baseline-on-migrate: ${SPRING_FLYWAY_BASELINE_ON_MIGRATE:true}
+    validate-on-migrate: false
     clean-disabled: true
 
 springdoc:

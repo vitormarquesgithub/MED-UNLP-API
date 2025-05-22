@@ -13,6 +13,14 @@ configurations {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -78,8 +86,15 @@ tasks.withType(JavaCompile) {
 }
 
 bootJar {
-    archiveFileName = "${project.name}.jar"
+    archiveFileName = "med-unlp-backend.jar" 
     layered {
         enabled = true
+        includeLayerTools = true
     }
+    dependsOn processResources 
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty "spring.profiles.active", "test"
 }

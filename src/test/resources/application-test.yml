@@ -1,0 +1,5 @@
+spring:
+  security:
+    jwt:
+      secret-key: test-secret-key
+      expiration-ms: 3600000

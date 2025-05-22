@@ -1,6 +1,5 @@
 services:
   med-unlp-api:
-    env_file: .env 
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -9,11 +8,12 @@ services:
     ports:
       - "8080:8080"
     environment:
+      SPRING_SECURITY_JWT_SECRET_KEY: "bW92ZWJlbG93ZXhlcmNpc2VzcGlyaXRkb2N0b3JzdG92ZXRvYmFjY29yZW1haW50aGk="
+      SPRING_SECURITY_JWT_EXPIRATION_MS: "86400000"
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://med-unlp-db:5432/med_unlp
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: example
- 
     depends_on:
       med-unlp-db:
         condition: service_healthy
@@ -27,10 +27,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: example
       POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d med_unlp"]
       interval: 5s

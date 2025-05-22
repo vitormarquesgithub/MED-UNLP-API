@@ -8,7 +8,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "spring.security.jwt.secret-key=test-secret-key",
+    "spring.security.jwt.expiration-ms=3600000"
+})
 @Testcontainers
 class MedUnlpApiApplicationTests {
 
@@ -18,19 +21,19 @@ class MedUnlpApiApplicationTests {
         .withUsername("postgres")
         .withPassword("example");
 
-	@DynamicPropertySource
-	static void configureProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", postgres::getJdbcUrl);
-		registry.add("spring.datasource.username", postgres::getUsername);
-		registry.add("spring.datasource.password", postgres::getPassword);
-		registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-		
-		// Provide a dummy API key
-		registry.add("spring.ai.openai.api-key", () -> "SPRING_AI_OPENAI_API_KEY");
-	}
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+        
+        registry.add("spring.flyway.enabled", () -> "false");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        registry.add("spring.ai.openai.api-key", () -> "dummy-key");
+    }
 
     @Test
     void contextLoads() {
-        // Teste básico de carga de contexto
     }
 }
